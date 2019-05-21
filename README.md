@@ -22,7 +22,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/vbatoufflet/httpserver"
+	"batou.dev/httpserver"
 )
 
 func main() {
@@ -53,5 +53,5 @@ func main() {
 }
 ```
 
-[godoc-badge]: https://godoc.org/github.com/vbatoufflet/httpserver?status.svg
-[godoc-url]: https://godoc.org/github.com/vbatoufflet/httpserver
+[godoc-badge]: https://godoc.org/batou.dev/httpserver?status.svg
+[godoc-url]: https://godoc.org/batou.dev/httpserver
