@@ -63,20 +63,24 @@ func (s *socket) init() error {
 	}
 
 	uid := os.Getuid()
+
 	if s.User != "" {
 		user, err := user.Lookup(s.User)
 		if err != nil {
 			return err
 		}
+
 		uid, _ = strconv.Atoi(user.Uid)
 	}
 
 	gid := os.Getgid()
+
 	if s.Group != "" {
 		group, err := user.LookupGroup(s.Group)
 		if err != nil {
 			return err
 		}
+
 		gid, _ = strconv.Atoi(group.Gid)
 	}
 

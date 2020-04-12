@@ -43,20 +43,22 @@ func Test_Server_UNIX_Params(t *testing.T) {
 	)
 }
 
-func testServer(t *testing.T, addr, netProto, netAddr string, test func(*testing.T)) {
-	m := http.NewServeMux()
-	m.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) { rw.Write([]byte("foo")) })
+func testServer(t *testing.T, addr, netProto, netAddr string, fn func(*testing.T)) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
+		rw.Write([]byte("foo")) // nolint: errcheck
+	})
 
-	s := &Server{
+	srv := &Server{
 		Addr:    addr,
-		Handler: m,
+		Handler: mux,
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if test != nil {
-		go test(t)
+	if fn != nil {
+		go fn(t)
 	}
 
 	go func() {
@@ -72,6 +74,7 @@ func testServer(t *testing.T, addr, netProto, netAddr string, test func(*testing
 
 		resp, err := client.Get("http://foo/")
 		assert.Nil(t, err)
+
 		defer resp.Body.Close()
 
 		b, err := ioutil.ReadAll(resp.Body)
@@ -81,6 +84,6 @@ func testServer(t *testing.T, addr, netProto, netAddr string, test func(*testing
 		cancel()
 	}()
 
-	err := s.Run(ctx)
+	err := srv.Run(ctx)
 	assert.Nil(t, err)
 }

@@ -11,13 +11,15 @@ import (
 // Server is a HTTP server.
 type Server struct {
 	// Addr is the address for the server to listen on.
-	// e.g. "localhost:8080" or "unix:/path/to/server.sock?mode=0600&user=www-data&group=www-data"
+	// e.g. "localhost:8080" or
+	// "unix:/path/to/server.sock?mode=0600&user=www-data&group=www-data"
 	Addr string
 
 	// Handler is a HTTP handler serving requests.
 	Handler http.Handler
 
-	// ShutdownTimeout is the duration to wait before forcefully shuting down the server.
+	// ShutdownTimeout is the duration to wait before forcefully shuting down
+	// the server.
 	ShutdownTimeout time.Duration
 }
 
@@ -30,13 +32,13 @@ func (s *Server) Run(ctx context.Context) error {
 
 	listener, err := net.Listen(socket.Proto, socket.Addr)
 	if err != nil {
-		return fmt.Errorf("cannot listen: %s", err)
+		return fmt.Errorf("cannot listen: %w", err)
 	}
 	defer listener.Close()
 
 	err = socket.init()
 	if err != nil {
-		return fmt.Errorf("cannot initialize socket: %s", err)
+		return fmt.Errorf("cannot initialize socket: %w", err)
 	}
 
 	server := &http.Server{
@@ -45,6 +47,7 @@ func (s *Server) Run(ctx context.Context) error {
 	}
 
 	errCh := make(chan error)
+
 	go func() {
 		errCh <- server.Serve(listener)
 	}()
