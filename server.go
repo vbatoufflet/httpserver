@@ -57,17 +57,16 @@ func (s *Server) Run(ctx context.Context) error {
 		return err
 
 	case <-ctx.Done():
-		// Stop immediately if no shutdown timeout
+		server.SetKeepAlivesEnabled(false)
+
+		// Immediately shutdown server if no timeout
 		if s.ShutdownTimeout == 0 {
-			server.Shutdown(ctx)
-			break
+			return server.Shutdown(ctx)
 		}
 
 		ctx, cancel := context.WithTimeout(context.Background(), s.ShutdownTimeout)
 		defer cancel()
 
-		server.Shutdown(ctx)
+		return server.Shutdown(ctx)
 	}
-
-	return nil
 }
